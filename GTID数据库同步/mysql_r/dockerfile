@@ -1,0 +1,5 @@
+#使用mysql5.6基础镜像
+FROM mysql:5.6
+MAINTAINER  GTID从 526353781@qq.com
+ENV MYSQL_ALLOW_EMPTY_PASSWORD yes
+COPY ./conf/mysql.cnf /etc/mysql/conf.d/
