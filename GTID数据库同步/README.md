@@ -1,5 +1,5 @@
 # v1.0
-==========
+****
 ##完成
 * mysql 主库mysql.cnf 配置
 * 主库 slave 账号创建shell
