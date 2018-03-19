@@ -1,0 +1,16 @@
+version : '2'
+services :
+    mysql-m:
+        build : ./mysql_wr/
+        ports :
+            - "3307:3306"
+        volumes:
+            - ./mysql_wr/data/:/var/lib/mysql/
+    mysql-c:
+        build : ./mysql_r/
+        ports :
+            - "3308:3306"
+        volumes:
+            - ./mysql_r/data/:/var/lib/mysql/
+        links:
+            - mysql-m:master
