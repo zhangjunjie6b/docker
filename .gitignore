@@ -1,5 +1,5 @@
 composer.phar
 /vendor/
-/.idea
+/.idea/
 data/
 .DS_Store
