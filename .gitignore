@@ -1,3 +1,5 @@
 composer.phar
 /vendor/
 /.idea
+/mysql_r/data/
+/mysql_wr/data/
