@@ -28,26 +28,45 @@
 Master my.cnf配置片段
 
 > [mysqld]
+
 > server-id = 1                                 #服务器id
+
 > gtid_mode = on                                #开启gtid模式
+
 > log-bin = /data/mysql/binlog/master-binlog    #开启binlog
+
 > enforce_gtid_consistency = 1                  #强制gtid一致性，开启后对于特定create table不被支持
+
 > log_slave_update = 1                          #开启从库写入binlog
+
 > binlog_format = row                           #binlog开启row模式
+
 > relay_log_recovery = 1                        #开启中继日志完整性（当slave从库宕机后，假如relay-log损坏了，导致一部分中继日志没有处理，则自动放弃所有未执行的relay-log，并且重新从master上获取日志，这样就保证了relay-log的完整性。）
+
 > sync-binlog = 1                               #强制将binlog_cache写入磁盘，一致性要求不高的场景下设置为0可关闭，性能会大幅提速数倍
+
 > skip_slave_start = 1                          #使slave在mysql启动时不启动复制进程，使用 start slave启动 
 
 Slave my.cnf配置片段
+
 >[mysqld]
+
 > server-id = 5                                 #服务器id
+
 > gtid_mode = on                                #开启gtid模式
+
 > log-bin = /data/mysql/binlog/slave-binlog     #开启binlog
+
 > enforce_gtid_consistency = 1                  #强制gtid一致性，开启后对于特定create table不被支持
+
 > log_slave_update = 1                          #开启从库写入binlog
+
 > binlog_format = row                           #binlog开启row模式
+
 > relay_log_recovery = 1                        #开启中继日志完整性（当slave从库宕机后，假如relay-log损坏了，导致一部分中继日志没有处理，则自动放弃所有未执行的relay-log，并且重新从master上获取日志，这样就保证了relay-log的完整性。）
+
 > sync-binlog = 1                               #强制将binlog_cache写入磁盘，一致性要求不高的场景下设置为0可关闭，性能会大幅提速数倍
+
 > skip_slave_start = 1                          #使slave在mysql启动时不启动复制进程，使用 start slave启动 
 
 在Master上创建主从复制账号
