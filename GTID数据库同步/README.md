@@ -24,6 +24,42 @@
 
 > 4、GTID是连续没有空洞的，因此主从库出现数据冲突时，可以用添加空事物的方式进行跳过。
 
+##日志点配置
+Master my.cnf配置片段
+
+> [mysqld]
+> server-id = 1                                 #服务器id
+> gtid_mode = on                                #开启gtid模式
+> log-bin = /data/mysql/binlog/master-binlog    #开启binlog
+> enforce_gtid_consistency = 1                  #强制gtid一致性，开启后对于特定create table不被支持
+> log_slave_update = 1                          #开启从库写入binlog
+> binlog_format = row                           #binlog开启row模式
+> relay_log_recovery = 1                        #开启中继日志完整性（当slave从库宕机后，假如relay-log损坏了，导致一部分中继日志没有处理，则自动放弃所有未执行的relay-log，并且重新从master上获取日志，这样就保证了relay-log的完整性。）
+> sync-binlog = 1                               #强制将binlog_cache写入磁盘，一致性要求不高的场景下设置为0可关闭，性能会大幅提速数倍
+> skip_slave_start = 1                          #使slave在mysql启动时不启动复制进程，使用 start slave启动 
+
+Slave my.cnf配置片段
+>[mysqld]
+> server-id = 5                                 #服务器id
+> gtid_mode = on                                #开启gtid模式
+> log-bin = /data/mysql/binlog/slave-binlog     #开启binlog
+> enforce_gtid_consistency = 1                  #强制gtid一致性，开启后对于特定create table不被支持
+> log_slave_update = 1                          #开启从库写入binlog
+> binlog_format = row                           #binlog开启row模式
+> relay_log_recovery = 1                        #开启中继日志完整性（当slave从库宕机后，假如relay-log损坏了，导致一部分中继日志没有处理，则自动放弃所有未执行的relay-log，并且重新从master上获取日志，这样就保证了relay-log的完整性。）
+> sync-binlog = 1                               #强制将binlog_cache写入磁盘，一致性要求不高的场景下设置为0可关闭，性能会大幅提速数倍
+> skip_slave_start = 1                          #使slave在mysql启动时不启动复制进程，使用 start slave启动 
+
+在Master上创建主从复制账号
+>CREATE USER 'docker'@'%' IDENTIFIED BY 'docker';
+ GRANT REPLICATION SLAVE ON *.* TO 'docker'@'%';
+ flush privileges;(shell已创建)
+
+在Slave上执行
+>CHANGE MASTER TO MASTER_HOST=mysql-m,MASTER_PORT=3306,MASTER_USER='docker',MASTER_PASSWORD='docker',master_log_file='slave-binlog.000005',master_log_pos=191;
+ START SLAVE;
+ SHOW SLAVE STATUS\G;
+
 ##部署说明
 1.获取 
 > git clone git@github.com:526353781/docker.git
